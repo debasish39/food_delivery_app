@@ -32,7 +32,7 @@ import Orders from "../pages/orders/Orders";
 import AdminCoupon from "../pages/coupon/AdminCoupon";
 import Payments from "../pages/payment/Payments";
 import AdminUsers from "../pages/authadmin/AdminUsers";
-
+import NotFound from "../pages/NotFound";
 export default function AppRoutes() {
 
   return (
@@ -130,7 +130,7 @@ export default function AppRoutes() {
           <SingleOrder />
         </ProtectedRoute>
       } />
-
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

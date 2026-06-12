@@ -24,6 +24,7 @@ import SingleOrder from "../pages/SingleOrder";
 import ChangePassword from "../pages/auth/ChangePassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import ForgotPassword from "../pages/auth/ForgotPassword";
+import NotFound from "../pages/NotFound";
 export default function AppRoutes() {
 
   return (
@@ -121,6 +122,7 @@ export default function AppRoutes() {
     </ProtectedRoute>
   }
 />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
