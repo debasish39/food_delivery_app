@@ -1,0 +1,45 @@
+@import "tailwindcss";
+/* .Toastify__toast {
+  border-radius: 12px !important;
+  font-family: Sora, sans-serif;
+}
+
+.Toastify__toast--success {
+  background: #1a1a1a !important;
+  color: #fff !important;
+  border: 1px solid #ff6b2b;
+}
+
+.Toastify__toast--error {
+  background: #1a1a1a !important;
+  color: #fff !important;
+  border: 1px solid #ff3b3b;
+} */
+ .scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.fr-card-media {
+  position: relative;
+  overflow: hidden;
+  height: 200px;
+}
+
+.fr-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,.6),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: .25s;
+}
+
+.fr-card:hover .fr-card-overlay {
+  opacity: 1;
+}
