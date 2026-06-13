@@ -15,13 +15,6 @@
   color: #fff !important;
   border: 1px solid #ff3b3b;
 } */
- .scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
 .fr-card-media {
   position: relative;
   overflow: hidden;
@@ -42,4 +35,66 @@
 
 .fr-card:hover .fr-card-overlay {
   opacity: 1;
+}
+/* Chrome, Edge, Safari */
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #1a1a1d;
+    border-radius: 999px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      180deg,
+      #fb923c,
+      #ea580c
+    );
+    border-radius: 999px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+      180deg,
+      #fdba74,
+      #f97316
+    );
+  }
+}
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1d;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    #fb923c,
+    #ea580c
+  );
+  border-radius: 999px;
+  border: 2px solid #1a1a1d;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    #fdba74,
+    #f97316
+  );
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #ea580c #1a1a1d;
 }

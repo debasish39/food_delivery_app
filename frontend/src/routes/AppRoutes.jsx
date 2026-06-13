@@ -25,8 +25,15 @@ import ChangePassword from "../pages/auth/ChangePassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import NotFound from "../pages/NotFound";
-export default function AppRoutes() {
+import useOnlineStatus from "../hooks/useOnlineStatus";
+import OfflinePage from "../pages/OfflinePage";
 
+export default function AppRoutes() {
+ const isOnline = useOnlineStatus();
+
+  if (!isOnline) {
+    return <OfflinePage />;
+  }
   return (
     <Routes>
 

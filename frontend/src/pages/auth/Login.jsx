@@ -85,7 +85,7 @@ export default function Login() {
         .auth-tdot{width:4px;height:4px;border-radius:50%;background:rgba(249,115,22,.5);}
       `}</style>
 
-      <div className="auth-root">
+      <div className="auth-root mt-6">
         <div className="auth-orb auth-orb1" />
         <div className="auth-orb auth-orb2" />
         {[

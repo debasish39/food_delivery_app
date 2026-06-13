@@ -494,10 +494,22 @@ export default function Foods() {
         .fr-hero-dot.on{background:var(--or);width:20px;border-radius:3px;}
 
         /* layout: sidebar + content */
-        .fr-layout{display:grid;grid-template-columns:272px 1fr;gap:24px;align-items:start;}
-        @media(max-width:980px){.fr-layout{grid-template-columns:1fr;}}
-        .fr-sidebar{display:block;}
-        @media(max-width:980px){.fr-sidebar{display:none;}}
+       .fr-layout{display:grid;grid-template-columns:272px 1fr;gap:24px;align-items:start;}
+@media(max-width:980px){.fr-layout{grid-template-columns:1fr;}}
+
+.fr-sidebar{
+  display:block;
+  position:sticky;
+  top:20px;
+  align-self:start;
+  max-height:calc(100vh - 40px);
+  overflow-y:auto;
+}
+@media(max-width:980px){.fr-sidebar{display:none;}}
+
+/* hide scrollbar on sidebar for a cleaner look */
+.fr-sidebar::-webkit-scrollbar{width:4px;}
+.fr-sidebar::-webkit-scrollbar-thumb{background:var(--or3);border-radius:2px;}
 
         /* search + toolbar */
         .fr-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
@@ -763,7 +775,7 @@ input[type="range"]{
 ========================= */
 
 .fr-drawer-body{
-  background:#0f0f0f;
+  background:gray-900;
 }
 
 .fr-drawer-head{
@@ -773,6 +785,8 @@ input[type="range"]{
       rgba(249,115,22,.15),
       transparent
     );
+    color:orange;
+
 }
         /* =========================
            OVERLAY + DRAWER

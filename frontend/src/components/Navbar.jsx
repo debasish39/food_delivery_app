@@ -5,6 +5,7 @@ import Location from "../pages/Location";
 import { searchFoods } from "../services/foodService";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
+import { LogIn, UserPlus } from "lucide-react";
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [savedLocation, setSavedLocation] = useState({});
@@ -179,7 +180,7 @@ right: 0; z-index:200; font-family:'DM Sans',sans-serif; }
         .fn-brand { font-family:'Syne',sans-serif; font-size:1.3rem; font-weight:800; color:var(--orange); letter-spacing:-.02em; text-decoration:none; }
         .fn-brand span { color:var(--txt); }
 
-        .fn-loc-pill { display:flex; align-items:center; gap:8px; background:var(--bg3); border-radius:12px; padding:6px 10px; cursor:pointer; transition:border-color .2s,background .2s; max-width:190px; }
+        .fn-loc-pill { display:flex; align-items:center; gap:8px;  border-radius:12px; padding:6px 10px; cursor:pointer; transition:border-color .2s,background .2s; max-width:190px; }
         .fn-loc-pill:hover { border-color:var(--orange3); background:var(--orange2); }
         .fn-loc-pin { width:28px; height:28px; border-radius:50%; background:var(--orange2); border:1px solid var(--orange3); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--orange); font-size:14px; }
         .fn-loc-text p { font-size:.72rem; font-weight:500; color:var(--txt); line-height:1.1; max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -357,7 +358,7 @@ right: 0; z-index:200; font-family:'DM Sans',sans-serif; }
        <nav className={`fn-topnav ${navHidden ? "hide" : ""}`}>
           <div className="fn-nav-left">
             <Link to="/" className="fn-brand hidden sm:block">
-  Feast<span>Run</span>
+  Odi<span>Kart</span>
 </Link>
 
            <button
@@ -390,15 +391,60 @@ right: 0; z-index:200; font-family:'DM Sans',sans-serif; }
               </Link>
             ))}
             {user ? (
-              <>
-                <Link to="/profile" className={`fn-dlink ${isActive("/profile") ? "active" : ""}`}><i className="ti ti-user" aria-hidden="true" /> Profile</Link>
-                <Link to="/orders" className={`fn-dlink ${isActive("/orders") ? "active" : ""}`}><i className="ti ti-receipt" aria-hidden="true" /> Orders</Link>
-                <button onClick={handleLogout} className="fn-logout-btn"><i className="ti ti-logout" aria-hidden="true" /> Logout</button>
-              </>
+           <>
+  <Link
+    to="/profile"
+    className={`flex items-center gap-3 px-4 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+      isActive("/profile")
+        ? "bg-orange-500 text-gray-500 shadow-lg shadow-orange-900/30"
+        : "text-gray-400 hover:bg-orange-400/10 hover:text-orange-500"
+    }`}
+  >
+    <i className="ti ti-user text-lg" aria-hidden="true" style={{fontSize:"15px"}}/>
+    <span>Profile</span>
+  </Link>
+
+  <Link
+    to="/orders"
+    className={`flex items-center gap-3 px-4 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+      isActive("/orders")
+        ? "bg-orange-500 text-gray-500 shadow-lg shadow-orange-900/30"
+        : "text-gray-400 hover:bg-orange-400/10 hover:text-orange-500"
+    }`}
+  >
+    <i className="ti ti-receipt text-lg" aria-hidden="true" style={{fontSize:"15px"}}/>
+    <span>Orders</span>
+  </Link>
+
+  {/* <button
+    onClick={handleLogout}
+    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200"
+  >
+    <i className="ti ti-logout text-lg" aria-hidden="true" />
+    <span>Logout</span>
+  </button> */}
+</>
             ) : (
               <>
-                <Link to="/login" className="fn-login-btn">Login</Link>
-                <Link to="/register" className="fn-register-btn">Register</Link>
+             
+
+<div className="flex items-center gap-3">
+  <Link
+    to="/login"
+    className="flex items-center gap-2 px-5 py-1 rounded-xl border border-white/15 bg-white/5 backdrop-blur-xl text-white font-medium hover:bg-white/10 transition-all duration-200"
+  >
+    <LogIn size={18} />
+    Login
+  </Link>
+
+  <Link
+    to="/register"
+    className="flex items-center gap-2 px-5 py-1 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold shadow-lg shadow-orange-900/30 hover:shadow-orange-700/40 hover:-translate-y-0.5 transition-all duration-200"
+  >
+    <UserPlus size={18} />
+    Register
+  </Link>
+</div>
               </>
             )}
           </div>

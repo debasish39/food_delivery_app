@@ -509,7 +509,7 @@ export default function Register() {
         }
       `}</style>
 
-      <div className="reg-root">
+      <div className="reg-root mt-12">
         {floatingIcons.map((item, i) => (
           <div
             key={i}

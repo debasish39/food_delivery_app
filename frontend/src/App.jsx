@@ -104,7 +104,7 @@ if (appLoading || !locationChecked) {
 
       <Navbar />
 
-      <main className="main-content">
+      <main className="main-content overflow-x-hidden custom-scrollbar "> 
         <AppRoutes />
       </main>
 
