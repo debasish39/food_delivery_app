@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 import { registerUser } from "../../services/authService";
-
+import { toast } from "react-toastify";
 const foodImages = [
   "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80",
   "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80",
@@ -36,7 +35,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [mounted, setMounted] = useState(false);
-
+const [errors, setErrors] = useState({});
   useEffect(() => {
     setMounted(true);
     const timer = setInterval(() => {
@@ -45,34 +44,85 @@ export default function Register() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+ const handleChange = (e) => {
+  const { name, value } = e.target;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.fullname || !formData.email || !formData.phone || !formData.password || !formData.confirmPassword)
-      return toast.error("All fields are required");
-    if (formData.password !== formData.confirmPassword)
-      return toast.error("Passwords do not match");
-    if (formData.password.length < 6)
-      return toast.error("Password must be at least 6 characters");
-    try {
-      setLoading(true);
-      const { data } = await registerUser({
-        fullname: formData.fullname,
-        email: formData.email,
-        phone: formData.phone,
-        password: formData.password,
-      });
-      toast.success(data.message);
-      navigate("/verify-email", { state: { email: formData.email } });
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Registration failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+
+  if (errors[name]) {
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+  }
+};
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const newErrors = {};
+
+  if (!formData.fullname.trim()) {
+    newErrors.fullname = "Full name is required";
+  }
+
+  if (!formData.email.trim()) {
+    newErrors.email = "Email is required";
+  } else if (
+    !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(formData.email)
+  ) {
+    newErrors.email = "Please enter a valid email";
+  }
+
+  if (!formData.phone.trim()) {
+    newErrors.phone = "Phone number is required";
+  } else if (!/^[6-9]\d{9}$/.test(formData.phone)) {
+    newErrors.phone = "Enter a valid 10-digit phone number";
+  }
+
+  if (!formData.password) {
+    newErrors.password = "Password is required";
+  } else if (formData.password.length < 6) {
+    newErrors.password = "Password must be at least 6 characters";
+  }
+
+  if (!formData.confirmPassword) {
+    newErrors.confirmPassword = "Confirm password is required";
+  } else if (formData.password !== formData.confirmPassword) {
+    newErrors.confirmPassword = "Passwords do not match";
+  }
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
+
+  setErrors({});
+
+  try {
+    setLoading(true);
+
+    const { data } = await registerUser({
+      fullname: formData.fullname,
+      email: formData.email,
+      phone: formData.phone,
+      password: formData.password,
+    });
+
+    toast.success(data.message);
+    navigate("/verify-email", {
+      state: { email: formData.email },
+    });
+  } catch (error) {
+    toast.error(
+      error.response?.data?.message || "Registration failed"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   const fields = [
     { name: "fullname", label: "Full Name", type: "text", placeholder: "John Doe", icon: UserIcon },
@@ -582,23 +632,43 @@ export default function Register() {
                       {field.label}
                     </label>
                     <div className="input-wrap">
-                      <input
-                        type={field.type}
-                        name={field.name}
-                        value={formData[field.name]}
-                        onChange={handleChange}
-                        onFocus={() => setFocusedField(field.name)}
-                        onBlur={() => setFocusedField(null)}
-                        placeholder={field.placeholder}
-                        className="form-input"
-                        autoComplete="off"
-                      />
-                      {field.showToggle && (
-                        <button type="button" className="eye-btn" onClick={field.toggle} tabIndex={-1}>
-                          {field.showState ? <EyeOffIcon size={17} /> : <EyeIcon size={17} />}
-                        </button>
-                      )}
-                    </div>
+  <input
+    type={field.type}
+    name={field.name}
+    value={formData[field.name]}
+    onChange={handleChange}
+    onFocus={() => setFocusedField(field.name)}
+    onBlur={() => setFocusedField(null)}
+    placeholder={field.placeholder}
+    autoComplete="off"
+    className={`form-input ${
+      errors[field.name]
+        ? "border-red-500 ring-2 ring-red-500/20"
+        : ""
+    }`}
+  />
+
+  {field.showToggle && (
+    <button
+      type="button"
+      className="eye-btn"
+      onClick={field.toggle}
+      tabIndex={-1}
+    >
+      {field.showState ? (
+        <EyeOffIcon size={17} />
+      ) : (
+        <EyeIcon size={17} />
+      )}
+    </button>
+  )}
+</div>
+
+{errors[field.name] && (
+  <p className="mt-1 text-sm text-red-500">
+    {errors[field.name]}
+  </p>
+)}
                   </div>
                 ))}
               </div>

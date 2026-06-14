@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { sendLoginOtp, verifyLoginOtp } from "../../services/authService";
 
 export default function LoginOtp() {
@@ -14,7 +14,8 @@ export default function LoginOtp() {
   const [progress, setProgress] = useState(0);
   const inputRefs = useRef([]);
   const timerRef = useRef(null);
-
+  const [errors, setErrors] = useState({});
+  const [otpError, setOtpError] = useState("");
   useEffect(() => { setTimeout(() => setMounted(true), 80); }, []);
 
   const startCountdown = () => {
@@ -26,34 +27,80 @@ export default function LoginOtp() {
   };
 
   const handleSendOtp = async () => {
-    if (!email) return toast.error("Please enter email");
-    try {
-      setLoading(true);
-      const { data } = await sendLoginOtp({ email });
-      toast.success(data.message);
-      setOtpSent(true);
-      startCountdown();
-      setTimeout(() => inputRefs.current[0]?.focus(), 200);
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to send OTP");
-    } finally { setLoading(false); }
-  };
+  const newErrors = {};
 
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    const otpStr = otp.join("");
-    if (otpStr.length < 6) return toast.error("Enter all 6 digits");
-    try {
-      setLoading(true);
-      const { data } = await verifyLoginOtp({ email, otp: otpStr });
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      toast.success("Login Successful");
-      window.location.href = "/";
-    } catch (error) {
-      toast.error(error.response?.data?.message || "OTP Verification Failed");
-    } finally { setLoading(false); }
-  };
+  if (!email.trim()) {
+    newErrors.email = "Email is required";
+  } else if (
+    !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)
+  ) {
+    newErrors.email = "Please enter a valid email address";
+  }
+
+  if (Object.keys(newErrors).length) {
+    setErrors(newErrors);
+    return;
+  }
+
+ setErrors({});
+
+try {
+  setLoading(true);
+
+  const { data } = await sendLoginOtp({ email });
+
+  toast.success(data.message);
+  setOtpSent(true);
+  startCountdown();
+
+  setTimeout(() => {
+    inputRefs.current[0]?.focus();
+  }, 200);
+} catch (error) {
+  toast.error(
+    error.response?.data?.message || "Failed to send OTP"
+  );
+} finally {
+  setLoading(false);
+}
+
+  // API call
+};
+
+const handleVerifyOtp = async (e) => {
+  e.preventDefault();
+
+  const otpStr = otp.join("");
+
+ if (!/^\d{6}$/.test(otpStr)) {
+    setOtpError("Please enter all 6 digits");
+    return;
+  }
+
+ setOtpError("");
+
+try {
+  setLoading(true);
+
+  const { data } = await verifyLoginOtp({
+    email,
+    otp: otpStr,
+  });
+
+  localStorage.setItem("token", data.token);
+  localStorage.setItem("user", JSON.stringify(data.user));
+
+  toast.success("Login Successful");
+  window.location.href = "/";
+} catch (error) {
+  toast.error(
+    error.response?.data?.message ||
+      "OTP Verification Failed"
+  );
+} finally {
+  setLoading(false);
+}
+};
 
   const handleOtpChange = (val, i) => {
     const newOtp = [...otp];
@@ -137,13 +184,62 @@ export default function LoginOtp() {
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                 Your Email
               </div>
-              <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" className="auth-input"/>
-              <button onClick={handleSendOtp} disabled={loading} className="auth-pbtn">
-                {loading ? <><div className="auth-spin"/>Sending…</> : <>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                  Send OTP Code
-                </>}
-              </button>
+              <div className="mb-4">
+  <input
+    type="email"
+    value={email}
+    onChange={(e) => {
+      setEmail(e.target.value);
+
+      if (errors.email) {
+        setErrors((prev) => ({
+          ...prev,
+          email: "",
+        }));
+      }
+    }}
+    placeholder="you@example.com"
+    className={`w-full px-4 py-3 rounded-xl bg-white/5 text-white outline-none border transition-all duration-200
+      ${
+        errors.email
+          ? "border-red-500 focus:ring-2 focus:ring-red-500/30"
+          : "border-white/10 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+      }`}
+  />
+
+  {errors.email && (
+    <p className="mt-1 text-sm text-red-500">
+      {errors.email}
+    </p>
+  )}
+</div>
+          <button
+  onClick={handleSendOtp}
+  disabled={loading}
+  className="auth-pbtn"
+>
+  {loading ? (
+    <>
+      <div className="auth-spin" />
+      Sending...
+    </>
+  ) : (
+    <>
+      <svg
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <line x1="22" y1="2" x2="11" y2="13" />
+        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+      </svg>
+      Send OTP Code
+    </>
+  )}
+</button>    
             </>
           ) : (
             <>
@@ -157,10 +253,37 @@ export default function LoginOtp() {
               <div className="prog-bar"><div className="prog-fill" style={{width:`${progress}%`}}/></div>
               <form onSubmit={handleVerifyOtp}>
                 <div className="otp-row">
-                  {otp.map((val, i) => (
-                    <input key={i} ref={el=>inputRefs.current[i]=el} type="text" inputMode="numeric" maxLength={1} value={val} onChange={e=>handleOtpChange(e.target.value,i)} onKeyDown={e=>handleOtpKey(e,i)} className={`otp-cell ${val?"filled":""}`}/>
-                  ))}
-                </div>
+  {otp.map((val, i) => (
+    <input
+      key={i}
+      ref={(el) => (inputRefs.current[i] = el)}
+      type="text"
+      inputMode="numeric"
+      maxLength={1}
+      value={val}
+      onChange={(e) => {
+        handleOtpChange(e.target.value, i);
+
+        if (otpError) {
+          setOtpError("");
+        }
+      }}
+      onKeyDown={(e) => handleOtpKey(e, i)}
+      className={`w-12 h-14 text-center rounded-xl bg-white/5 text-white text-xl font-bold outline-none border transition-all
+        ${
+          otpError
+            ? "border-red-500 focus:ring-2 focus:ring-red-500/30"
+            : "border-white/10 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+        }`}
+    />
+  ))}
+</div>
+
+{otpError && (
+  <p className="text-center text-sm text-red-500 mt-2">
+    {otpError}
+  </p>
+)}
                 <div className="cdown">{canResend ? "Ready to resend" : <>Resend in <span>{countdown}s</span></>}</div>
                 <button type="submit" disabled={loading} className="auth-pbtn" style={{marginTop:".9rem"}}>
                   {loading ? <><div className="auth-spin"/>Verifying…</> : <>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { verifyEmailOtp, resendOtp } from "../../services/authService";
 
 export default function VerifyEmail() {
